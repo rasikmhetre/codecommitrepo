@@ -1,0 +1,15 @@
+[
+  {
+    "name": "tomcatapp",
+    "image": "313475571243.dkr.ecr.us-east-1.amazonaws.com/tomcatapp",
+    "cpu": 10,
+    "memory": 512,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 8080
+      }
+    ]
+  }
+]
