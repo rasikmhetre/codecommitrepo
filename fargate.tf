@@ -116,7 +116,12 @@ resource "aws_iam_role_policy" "ecsrolepolicy" {
             "ecr:InitiateLayerUpload",
                 "ecr:UploadLayerPart",
                 "ecr:CompleteLayerUpload",
-                "ecr:PutImage"
+                "ecr:PutImage",
+                 "s3:GetObject",
+                  "s3:GetObjectVersion",
+                  "s3:GetBucketVersioning",
+        "s3:PutObject"
+
 
 
       ],
@@ -374,7 +379,9 @@ resource "aws_iam_role_policy" "codebuildpolicy" {
                 "ecr:PutImage",
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                "s3:GetObject",
+        "s3:GetObjectVersion"
             ],
             "Resource": "*"
         }
@@ -464,35 +471,43 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         "s3:PutObject",
         "s3:GetObject",
         "s3:GetObjectVersion",
-        "s3:GetBucketVersioning"
-        
+        "s3:GetBucketVersioning",
+        "ecs:DescribeContainerInstances",
+        "ecs:DescribeTasks",
+        "ecs:ListTasks",
+        "ecs:UpdateContainerAgent",
+        "ecs:StartTask",
+        "ecs:StopTask",
+        "ecs:RunTask",
+        "ecs:DeleteCluster",
+        "ecs:DeregisterContainerInstance",
+        "ecs:ListContainerInstances",
+        "ecs:RegisterContainerInstance",
+        "ecs:SubmitContainerStateChange",
+        "ecs:SubmitTaskStateChange"
+
 
       ],
       "Resource": [
 
         "${aws_s3_bucket.codepipeline_bucketrasik.arn}",
         "${aws_s3_bucket.codepipeline_bucketrasik.arn}/*",
-        "*"
-        
-
+        "*",
+        "arn:aws:logs:eu-west-1:723698621383:log-group:/aws/codebuild/tomcatbuild",
+            "arn:aws:logs:eu-west-1:723698621383:log-group:/aws/codebuild/tomcatbuild:*"
         ]
+    
     },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "codebuild:BatchGetBuilds",
-        "codebuild:StartBuild",
-        "codebuild:CreateProject",
-        "codebuild:UpdateProject"
-      ],
-       "Resource": "*"
-
-    },
+    
 
 
     {
             "Effect": "Allow",
             "Action": [
+            "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild",
+        "codebuild:CreateProject",
+        "codebuild:UpdateProject",
                 "codecommit:GitPull",
                 "ecr:GetAuthorizationToken",
                 "ecr:BatchCheckLayerAvailability",
@@ -521,6 +536,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         "codecommit:UpdateRepositoryDescription ",
         "codecommit:CancelUploadArchive",
         "codecommit:GetBranch"
+        
             ],
             "Resource": "*"
       }
@@ -531,14 +547,14 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 EOF
 }
 
-data "aws_kms_alias" "s3" {
+/*data "aws_kms_alias" "s3" {
   name = "alias/aws/s3"
 }
 
 resource "aws_kms_key" "a" {
   description             = "KMS key 1"
   deletion_window_in_days = 7
-}
+}*/
 
 resource "aws_codepipeline" "codepipeline" {
   name     = "tf-test-pipeline"
@@ -547,10 +563,10 @@ resource "aws_codepipeline" "codepipeline" {
   artifact_store {
     location = "${aws_s3_bucket.codepipeline_bucketrasik.bucket}"
     type     = "S3"
-  encryption_key {
+  /*encryption_key {
       id   = "${data.aws_kms_alias.s3.arn}"
       type = "KMS"
-    }
+    }*/
     
   }
 
